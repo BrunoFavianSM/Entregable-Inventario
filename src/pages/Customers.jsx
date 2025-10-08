@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Plus, Search, Mail, Phone, Edit, Trash2 } from 'lucide-react';
+import { Plus, Search, Mail, Phone, Edit, Trash2, User, MapPin } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
+import Select from '../components/ui/Select';
+import Modal from '../components/ui/Modal';
 import { customerAPI } from '../services/api';
 import { onCustomerUpdate } from '../services/socket';
 import toast from 'react-hot-toast';
@@ -11,6 +13,8 @@ const Customers = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(null);
 
   useEffect(() => {
     fetchCustomers();
@@ -71,7 +75,7 @@ const Customers = () => {
           <h1 className="text-2xl font-bold text-gray-900">Clientes</h1>
           <p className="text-gray-500 mt-1">Gestiona tu base de clientes</p>
         </div>
-        <Button icon={Plus}>Nuevo Cliente</Button>
+        <Button icon={Plus} onClick={() => setIsModalOpen(true)}>Nuevo Cliente</Button>
       </div>
 
       {/* Search */}
@@ -145,7 +149,16 @@ const Customers = () => {
               </div>
               
               <div className="flex gap-2 pt-3 border-t border-gray-200">
-                <Button size="sm" variant="outline" icon={Edit} className="flex-1">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  icon={Edit} 
+                  className="flex-1"
+                  onClick={() => {
+                    setEditingCustomer(customer);
+                    setIsModalOpen(true);
+                  }}
+                >
                   Editar
                 </Button>
                 <button
@@ -159,7 +172,197 @@ const Customers = () => {
           ))}
         </div>
       )}
+
+      {/* Customer Form Modal */}
+      <CustomerFormModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingCustomer(null);
+        }}
+        customer={editingCustomer}
+        onSuccess={() => {
+          fetchCustomers();
+          setIsModalOpen(false);
+          setEditingCustomer(null);
+        }}
+      />
     </div>
+  );
+};
+
+// Modal de Formulario de Cliente
+const CustomerFormModal = ({ isOpen, onClose, customer, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    document_type: 'DNI',
+    document_number: '',
+    customer_type: 'regular',
+  });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (customer) {
+      setFormData({
+        first_name: customer.first_name || '',
+        last_name: customer.last_name || '',
+        email: customer.email || '',
+        phone: customer.phone || '',
+        address: customer.address || '',
+        city: customer.city || '',
+        document_type: customer.document_type || 'DNI',
+        document_number: customer.document_number || '',
+        customer_type: customer.customer_type || 'regular',
+      });
+    } else {
+      setFormData({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        address: '',
+        city: '',
+        document_type: 'DNI',
+        document_number: '',
+        customer_type: 'regular',
+      });
+    }
+  }, [customer, isOpen]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      if (customer) {
+        await customerAPI.update(customer.id, formData);
+        toast.success('Cliente actualizado exitosamente');
+      } else {
+        await customerAPI.create(formData);
+        toast.success('Cliente creado exitosamente');
+      }
+      onSuccess();
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error al guardar cliente');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={customer ? 'Editar Cliente' : 'Nuevo Cliente'}
+      size="lg"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Nombres */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            label="Nombre *"
+            icon={User}
+            value={formData.first_name}
+            onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+            required
+            tooltip="Ingrese el nombre del cliente"
+          />
+          <Input
+            label="Apellido *"
+            value={formData.last_name}
+            onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+            required
+            tooltip="Ingrese el apellido del cliente"
+          />
+        </div>
+
+        {/* Contacto */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            label="Email"
+            icon={Mail}
+            type="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            tooltip="Correo electrónico del cliente (opcional)"
+          />
+          <Input
+            label="Teléfono"
+            icon={Phone}
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            tooltip="Número de teléfono del cliente"
+          />
+        </div>
+
+        {/* Documento */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Select
+            label="Tipo de Documento *"
+            value={formData.document_type}
+            onChange={(e) => setFormData({ ...formData, document_type: e.target.value })}
+            required
+            tooltip="Seleccione el tipo de documento de identidad"
+          >
+            <option value="DNI">DNI</option>
+            <option value="RUC">RUC</option>
+            <option value="CE">Carnet de Extranjería</option>
+            <option value="Pasaporte">Pasaporte</option>
+          </Select>
+          <Input
+            label="Número de Documento *"
+            value={formData.document_number}
+            onChange={(e) => setFormData({ ...formData, document_number: e.target.value })}
+            required
+            tooltip="Número del documento de identidad"
+          />
+        </div>
+
+        {/* Dirección */}
+        <Input
+          label="Dirección"
+          icon={MapPin}
+          value={formData.address}
+          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+          tooltip="Dirección completa del cliente"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            label="Ciudad"
+            value={formData.city}
+            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+            tooltip="Ciudad de residencia"
+          />
+          <Select
+            label="Tipo de Cliente *"
+            value={formData.customer_type}
+            onChange={(e) => setFormData({ ...formData, customer_type: e.target.value })}
+            required
+            tooltip="Clasificación del cliente según su tipo de compra"
+          >
+            <option value="regular">Regular</option>
+            <option value="wholesale">Mayorista</option>
+            <option value="vip">VIP</option>
+          </Select>
+        </div>
+
+        <Modal.Footer>
+          <Button type="button" variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button type="submit" loading={loading}>
+            {customer ? 'Actualizar' : 'Crear'} Cliente
+          </Button>
+        </Modal.Footer>
+      </form>
+    </Modal>
   );
 };
 

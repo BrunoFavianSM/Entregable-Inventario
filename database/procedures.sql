@@ -4,7 +4,7 @@
 -- COMPATIBLE CON XAMPP/MariaDB
 -- ============================================
 
-USE gestion_inventario;
+USE nova_salud_inventario;
 
 DELIMITER $$
 

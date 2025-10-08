@@ -310,12 +310,14 @@ const ProductFormModal = ({ isOpen, onClose, product, onSuccess }) => {
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
+            tooltip="Ingrese el nombre completo del producto o medicamento. Ejemplo: Paracetamol 500mg"
           />
           <Input
             label="SKU *"
             value={formData.sku}
             onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
             required
+            tooltip="Código único de identificación del producto. Debe ser único en el sistema. Ejemplo: MED-001"
           />
         </div>
 
@@ -323,6 +325,7 @@ const ProductFormModal = ({ isOpen, onClose, product, onSuccess }) => {
           label="Descripción"
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          tooltip="Descripción detallada del producto, puede incluir ingredientes activos o características especiales"
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -333,6 +336,7 @@ const ProductFormModal = ({ isOpen, onClose, product, onSuccess }) => {
             value={formData.price}
             onChange={(e) => setFormData({ ...formData, price: e.target.value })}
             required
+            tooltip="Precio de venta al público. Este es el precio que pagarán los clientes"
           />
           <Input
             label="Costo (S/) *"
@@ -341,12 +345,14 @@ const ProductFormModal = ({ isOpen, onClose, product, onSuccess }) => {
             value={formData.cost}
             onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
             required
+            tooltip="Costo de adquisición del producto. Usado para calcular márgenes de ganancia"
           />
           <Input
             label="Stock Inicial"
             type="number"
             value={formData.stock_quantity}
             onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })}
+            tooltip="Cantidad inicial disponible en inventario. Puede dejarse en 0 si aún no tiene stock"
           />
         </div>
 
@@ -356,17 +362,20 @@ const ProductFormModal = ({ isOpen, onClose, product, onSuccess }) => {
             type="number"
             value={formData.min_stock_level}
             onChange={(e) => setFormData({ ...formData, min_stock_level: e.target.value })}
+            tooltip="Nivel mínimo de stock. El sistema generará una alerta cuando el stock baje de este nivel"
           />
           <Input
             label="Stock Máximo"
             type="number"
             value={formData.max_stock_level}
             onChange={(e) => setFormData({ ...formData, max_stock_level: e.target.value })}
+            tooltip="Nivel máximo de stock recomendado. Ayuda a identificar sobrestock en el inventario"
           />
           <Input
             label="Unidad"
             value={formData.unit}
             onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+            tooltip="Unidad de medida del producto. Ejemplo: unidad, caja, frasco, blister, etc."
           />
         </div>
 
@@ -375,6 +384,7 @@ const ProductFormModal = ({ isOpen, onClose, product, onSuccess }) => {
           value={formData.image_url}
           onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
           placeholder="https://ejemplo.com/imagen.jpg"
+          tooltip="URL de la imagen del producto. Puede dejar vacío si no tiene una imagen disponible"
         />
 
         <Modal.Footer>

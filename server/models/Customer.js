@@ -85,12 +85,12 @@ class Customer {
       customerData.email,
       customerData.phone,
       customerData.address,
-      customerData.city,
-      customerData.country,
-      customerData.document_type,
+      customerData.city || 'Lima',
+      customerData.country || 'Perú',
+      customerData.document_type || 'DNI',
       customerData.document_number,
-      customerData.customer_type,
-      customerData.status,
+      customerData.customer_type || 'regular',
+      customerData.status || 'active',
       id
     ];
     return await query(sql, params);

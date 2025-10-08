@@ -1,17 +1,17 @@
 -- ============================================
--- SISTEMA DE GESTIÓN DE INVENTARIO
--- Base de Datos MySQL
+-- SISTEMA DE GESTIÓN DE INVENTARIO - BOTICA NOVA SALUD
+-- Base de Datos MySQL - Adaptado para Farmacia
 -- ============================================
 
 
 -- Crear base de datos
 -- 
-CREATE DATABASE gestion_inventario CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+--CREATE DATABASE nova_salud_inventario CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 --
 
 
-CREATE DATABASE IF NOT EXISTS gestion_inventario CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE gestion_inventario;
+CREATE DATABASE IF NOT EXISTS nova_salud_inventario CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE nova_salud_inventario;
 
 -- ============================================
 -- TABLA: Categorías de Productos
@@ -42,13 +42,31 @@ CREATE TABLE IF NOT EXISTS products (
     unit VARCHAR(50) DEFAULT 'unidad',
     status ENUM('active', 'inactive', 'discontinued') DEFAULT 'active',
     image_url VARCHAR(500),
+    -- Campos específicos para farmacia
+    expiration_date DATE,
+    batch_number VARCHAR(100),
+    requires_prescription BOOLEAN DEFAULT FALSE,
+    active_ingredient VARCHAR(500),
+    concentration VARCHAR(100),
+    pharmaceutical_form ENUM('tablet', 'capsule', 'syrup', 'injection', 'cream', 'drops', 'spray', 'other') DEFAULT 'other',
+    manufacturer VARCHAR(200),
+    sanitary_registration VARCHAR(100),
+    contraindications TEXT,
+    dosage_instructions TEXT,
+    storage_conditions TEXT,
+    is_controlled_substance BOOLEAN DEFAULT FALSE,
+    therapeutic_class VARCHAR(200),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
     INDEX idx_product_sku (sku),
     INDEX idx_product_name (name),
     INDEX idx_product_stock (stock_quantity),
-    INDEX idx_product_status (status)
+    INDEX idx_product_status (status),
+    INDEX idx_product_expiration (expiration_date),
+    INDEX idx_product_prescription (requires_prescription),
+    INDEX idx_product_controlled (is_controlled_substance),
+    INDEX idx_product_batch (batch_number)
 ) ENGINE=InnoDB;
 
 -- ============================================
@@ -118,22 +136,67 @@ CREATE TABLE IF NOT EXISTS sale_details (
 ) ENGINE=InnoDB;
 
 -- ============================================
--- TABLA: Alertas de Stock
+-- TABLA: Recetas Médicas
+-- ============================================
+CREATE TABLE IF NOT EXISTS prescriptions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    prescription_number VARCHAR(50) UNIQUE NOT NULL,
+    customer_id INT NOT NULL,
+    doctor_name VARCHAR(200) NOT NULL,
+    doctor_license VARCHAR(50),
+    issue_date DATE NOT NULL,
+    expiration_date DATE NOT NULL,
+    diagnosis TEXT,
+    notes TEXT,
+    status ENUM('pending', 'partial', 'completed', 'expired') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
+    INDEX idx_prescription_number (prescription_number),
+    INDEX idx_prescription_customer (customer_id),
+    INDEX idx_prescription_status (status),
+    INDEX idx_prescription_expiration (expiration_date)
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: Detalles de Receta
+-- ============================================
+CREATE TABLE IF NOT EXISTS prescription_details (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    prescription_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity_prescribed INT NOT NULL,
+    quantity_dispensed INT DEFAULT 0,
+    dosage_instructions TEXT,
+    treatment_duration VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (prescription_id) REFERENCES prescriptions(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT,
+    INDEX idx_prescription_detail_prescription (prescription_id),
+    INDEX idx_prescription_detail_product (product_id)
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: Alertas de Stock (Mejorada para Farmacia)
 -- ============================================
 CREATE TABLE IF NOT EXISTS stock_alerts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT NOT NULL,
-    alert_type ENUM('low_stock', 'out_of_stock', 'overstock') NOT NULL,
-    alert_level ENUM('info', 'warning', 'critical') DEFAULT 'warning',
+    alert_type ENUM('low_stock', 'out_of_stock', 'overstock', 'expiring_soon', 'expired', 'controlled_substance') NOT NULL,
+    alert_level ENUM('info', 'warning', 'critical', 'urgent') DEFAULT 'warning',
     message TEXT NOT NULL,
     is_resolved BOOLEAN DEFAULT FALSE,
     resolved_at TIMESTAMP NULL,
+    expiration_date DATE NULL,
+    requires_immediate_action BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     INDEX idx_alert_product (product_id),
     INDEX idx_alert_resolved (is_resolved),
-    INDEX idx_alert_type (alert_type)
+    INDEX idx_alert_type (alert_type),
+    INDEX idx_alert_level (alert_level),
+    INDEX idx_alert_expiration (expiration_date)
 ) ENGINE=InnoDB;
 
 -- ============================================
@@ -226,7 +289,7 @@ CREATE TABLE IF NOT EXISTS system_config (
 ) ENGINE=InnoDB;
 
 -- ============================================
--- TRIGGERS: Actualización Automática de Alertas
+-- TRIGGERS: Actualización Automática de Alertas (Mejorado para Farmacia)
 -- ============================================
 
 DELIMITER $$
@@ -236,28 +299,38 @@ CREATE TRIGGER after_product_stock_update
 AFTER UPDATE ON products
 FOR EACH ROW
 BEGIN
-    -- Alerta de stock bajo
+    -- Alerta de stock bajo (crítico para medicamentos esenciales)
     IF NEW.stock_quantity <= NEW.min_stock_level AND NEW.stock_quantity > 0 THEN
-        INSERT INTO stock_alerts (product_id, alert_type, alert_level, message)
+        INSERT INTO stock_alerts (product_id, alert_type, alert_level, message, requires_immediate_action)
         VALUES (
             NEW.id,
             'low_stock',
-            'warning',
-            CONCAT('El producto "', NEW.name, '" tiene stock bajo: ', NEW.stock_quantity, ' unidades')
+            CASE 
+                WHEN NEW.requires_prescription = TRUE OR NEW.is_controlled_substance = TRUE THEN 'critical'
+                ELSE 'warning'
+            END,
+            CONCAT('MEDICAMENTO "', NEW.name, '" con stock bajo: ', NEW.stock_quantity, ' unidades. ', 
+                   CASE WHEN NEW.requires_prescription = TRUE THEN 'REQUIERE RECETA MÉDICA. ' ELSE '' END,
+                   CASE WHEN NEW.is_controlled_substance = TRUE THEN 'SUSTANCIA CONTROLADA. ' ELSE '' END),
+            CASE 
+                WHEN NEW.requires_prescription = TRUE OR NEW.is_controlled_substance = TRUE THEN TRUE
+                ELSE FALSE
+            END
         )
         ON DUPLICATE KEY UPDATE 
             is_resolved = FALSE,
             updated_at = CURRENT_TIMESTAMP;
     END IF;
     
-    -- Alerta de sin stock
+    -- Alerta de sin stock (urgente para medicamentos)
     IF NEW.stock_quantity = 0 THEN
-        INSERT INTO stock_alerts (product_id, alert_type, alert_level, message)
+        INSERT INTO stock_alerts (product_id, alert_type, alert_level, message, requires_immediate_action)
         VALUES (
             NEW.id,
             'out_of_stock',
-            'critical',
-            CONCAT('El producto "', NEW.name, '" está sin stock')
+            'urgent',
+            CONCAT('MEDICAMENTO "', NEW.name, '" SIN STOCK - REABASTECER INMEDIATAMENTE'),
+            TRUE
         )
         ON DUPLICATE KEY UPDATE 
             is_resolved = FALSE,
@@ -271,7 +344,7 @@ BEGIN
             NEW.id,
             'overstock',
             'info',
-            CONCAT('El producto "', NEW.name, '" tiene sobre stock: ', NEW.stock_quantity, ' unidades')
+            CONCAT('El medicamento "', NEW.name, '" tiene sobre stock: ', NEW.stock_quantity, ' unidades')
         )
         ON DUPLICATE KEY UPDATE 
             is_resolved = FALSE,
@@ -282,7 +355,50 @@ BEGIN
     IF NEW.stock_quantity > NEW.min_stock_level AND NEW.stock_quantity < NEW.max_stock_level THEN
         UPDATE stock_alerts 
         SET is_resolved = TRUE, resolved_at = CURRENT_TIMESTAMP
-        WHERE product_id = NEW.id AND is_resolved = FALSE;
+        WHERE product_id = NEW.id AND alert_type IN ('low_stock', 'out_of_stock', 'overstock') AND is_resolved = FALSE;
+    END IF;
+END$$
+
+-- Trigger para alertas de vencimiento
+CREATE TRIGGER after_product_insert_or_update
+AFTER INSERT ON products
+FOR EACH ROW
+BEGIN
+    -- Alerta de medicamento próximo a vencer (30 días)
+    IF NEW.expiration_date IS NOT NULL AND NEW.expiration_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN
+        INSERT INTO stock_alerts (product_id, alert_type, alert_level, message, expiration_date, requires_immediate_action)
+        VALUES (
+            NEW.id,
+            CASE 
+                WHEN NEW.expiration_date <= CURDATE() THEN 'expired'
+                ELSE 'expiring_soon'
+            END,
+            CASE 
+                WHEN NEW.expiration_date <= CURDATE() THEN 'urgent'
+                WHEN NEW.expiration_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) THEN 'critical'
+                ELSE 'warning'
+            END,
+            CASE 
+                WHEN NEW.expiration_date <= CURDATE() THEN 
+                    CONCAT('MEDICAMENTO VENCIDO: "', NEW.name, '" - Lote: ', IFNULL(NEW.batch_number, 'N/A'), ' - RETIRAR INMEDIATAMENTE')
+                ELSE 
+                    CONCAT('Medicamento próximo a vencer: "', NEW.name, '" - Vence: ', NEW.expiration_date, ' - Lote: ', IFNULL(NEW.batch_number, 'N/A'))
+            END,
+            NEW.expiration_date,
+            CASE WHEN NEW.expiration_date <= CURDATE() THEN TRUE ELSE FALSE END
+        );
+    END IF;
+    
+    -- Alerta para sustancias controladas
+    IF NEW.is_controlled_substance = TRUE THEN
+        INSERT INTO stock_alerts (product_id, alert_type, alert_level, message, requires_immediate_action)
+        VALUES (
+            NEW.id,
+            'controlled_substance',
+            'info',
+            CONCAT('Sustancia controlada registrada: "', NEW.name, '" - Requiere control especial'),
+            FALSE
+        );
     END IF;
 END$$
 

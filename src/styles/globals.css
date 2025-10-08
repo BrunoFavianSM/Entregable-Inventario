@@ -165,6 +165,17 @@
   .spinner {
     @apply inline-block w-6 h-6 border-4 border-gray-200 border-t-primary-600 rounded-full animate-spin;
   }
+
+  /* Ocultar flechas de input number */
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .no-spinner[type='number'] {
+    -moz-appearance: textfield;
+  }
 }
 
 @layer utilities {
@@ -200,6 +211,21 @@
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.15s ease-out;
 }
 
 /* Estilos para react-hot-toast */

@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  Package, 
+  Pill, 
   ShoppingCart, 
   Users, 
   MapPin, 
   AlertTriangle,
+  FileText,
   X
 } from 'lucide-react';
 import clsx from 'clsx';
@@ -19,8 +20,8 @@ const Sidebar = ({ isOpen, onClose }) => {
     },
     {
       path: '/products',
-      icon: Package,
-      label: 'Productos',
+      icon: Pill,
+      label: 'Medicamentos',
     },
     {
       path: '/sales',
@@ -33,9 +34,14 @@ const Sidebar = ({ isOpen, onClose }) => {
       label: 'Clientes',
     },
     {
+      path: '/prescriptions',
+      icon: FileText,
+      label: 'Recetas',
+    },
+    {
       path: '/locations',
       icon: MapPin,
-      label: 'Ubicaciones',
+      label: 'Sucursales',
     },
     {
       path: '/alerts',
@@ -102,10 +108,10 @@ const Sidebar = ({ isOpen, onClose }) => {
           <div className="p-4 border-t border-gray-200">
             <div className="bg-primary-50 rounded-lg p-3">
               <p className="text-xs text-primary-900 font-medium mb-1">
-                Sistema de Gestión
+                Nova Salud
               </p>
               <p className="text-xs text-primary-700">
-                Versión 1.0.0
+                Sistema Farmacéutico v1.0
               </p>
             </div>
           </div>

@@ -1,13 +1,14 @@
-# 🏪 Sistema de Gestión de Inventario
+# Sistema de Gestión de Inventario - Botica Nova Salud
 
-Sistema web completo para gestionar inventario, ventas y atención al cliente con actualización en tiempo real, alertas automáticas y geolocalización.
+Sistema web especializado para la gestión integral de inventario farmacéutico, ventas, recetas médicas y atención al cliente con actualización en tiempo real, alertas automáticas de vencimiento y control de sustancias reguladas.
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![Node](https://img.shields.io/badge/node-22.19.0-green.svg)
 ![React](https://img.shields.io/badge/react-18.2.0-blue.svg)
+![MySQL](https://img.shields.io/badge/mysql-8.0-orange.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
 - [Características](#características)
 - [Tecnologías](#tecnologías)
@@ -19,31 +20,32 @@ Sistema web completo para gestionar inventario, ventas y atención al cliente co
 - [API Endpoints](#api-endpoints)
 - [Capturas de Pantalla](#capturas-de-pantalla)
 
-## ✨ Características
+## Características
 
-### 🎯 Funcionalidades Principales
+### Funcionalidades Principales
 
-- ✅ **Gestión de Inventario**: CRUD completo de productos con control de stock
-- ✅ **Actualización en Tiempo Real**: WebSocket (Socket.io) para cambios instantáneos
-- ✅ **Alertas Automáticas**: Sistema inteligente de notificaciones para stock bajo
-- ✅ **Registro de Ventas**: Historial completo de transacciones con detalles
-- ✅ **Gestión de Clientes**: Base de datos de clientes con historial de compras
-- ✅ **Geolocalización**: Almacenamiento de coordenadas GPS para ubicaciones
-- ✅ **Dashboard Interactivo**: Visualización de métricas y estadísticas clave
-- ✅ **Reportes**: Generación de reportes de ventas y productos más vendidos
-- ✅ **UI/UX Moderna**: Diseño responsive con TailwindCSS
+- **Gestión de Medicamentos**: CRUD completo con fechas de vencimiento, lotes y principios activos
+- **Control de Recetas Médicas**: Sistema completo de prescripciones y dispensación
+- **Alertas Farmacéuticas**: Notificaciones de vencimiento, stock bajo y sustancias controladas
+- **Registro de Ventas**: Historial completo con validación de recetas médicas
+- **Gestión de Clientes**: Base de datos con historial médico y de compras
+- **Sucursales y Ubicaciones**: Gestión de múltiples puntos de venta
+- **Dashboard Farmacéutico**: Métricas específicas para boticas y farmacias
+- **Reportes Regulatorios**: Reportes para DIGEMID y auditorías
+- **Actualización en Tiempo Real**: WebSocket para cambios instantáneos
+- **UI/UX Optimizada**: Diseño específico para atención rápida al cliente
 
-### 🔥 Características Técnicas
+### Características Técnicas
 
-- 🚀 **Backend**: Node.js + Express + MySQL
-- ⚛️ **Frontend**: React 18 + Vite + TailwindCSS
-- 🔌 **Tiempo Real**: Socket.io para comunicación bidireccional
-- 📊 **Gráficos**: Recharts para visualización de datos
-- 🎨 **Iconos**: Lucide React
-- 🔔 **Notificaciones**: React Hot Toast
-- 📱 **Responsive**: Compatible con móviles, tablets y escritorio
+- **Backend**: Node.js + Express + MySQL
+- **Frontend**: React 18 + Vite + TailwindCSS
+- **Tiempo Real**: Socket.io para comunicación bidireccional
+- **Gráficos**: Recharts para visualización de datos
+- **Iconos**: Lucide React
+- **Notificaciones**: React Hot Toast
+- **Responsive**: Compatible con móviles, tablets y escritorio
 
-## 🛠️ Tecnologías
+## Tecnologías
 
 ### Backend
 - **Node.js** v22.19.0
@@ -66,7 +68,7 @@ Sistema web completo para gestionar inventario, ventas y atención al cliente co
 ### Base de Datos
 - **MySQL** 8.0+
 
-## 📦 Requisitos Previos
+## Requisitos Previos
 
 Antes de comenzar, asegúrate de tener instalado:
 
@@ -83,7 +85,7 @@ npm --version
 mysql --version
 ```
 
-## 🚀 Instalación
+## Instalación
 
 ### 1. Clonar o descargar el proyecto
 
@@ -102,7 +104,7 @@ cd gestion-inventario
 Abre MySQL Workbench, phpMyAdmin o tu cliente MySQL preferido y ejecuta:
 
 ```sql
-CREATE DATABASE gestion_inventario CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE nova_salud_inventario CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 #### Paso 2: Ejecutar scripts SQL
@@ -111,13 +113,13 @@ En orden, ejecuta los siguientes scripts ubicados en la carpeta `database/`:
 
 ```bash
 # 1. Crear estructura de tablas
-mysql -u root -p gestion_inventario < database/schema.sql
+mysql -u root -p nova_salud_inventario < database/schema.sql
 
 # 2. Insertar datos de prueba
-mysql -u root -p gestion_inventario < database/seeds.sql
+mysql -u root -p nova_salud_inventario < database/seeds.sql
 
 # 3. Crear procedimientos almacenados
-mysql -u root -p gestion_inventario < database/procedures.sql
+mysql -u root -p nova_salud_inventario < database/procedures.sql
 ```
 
 O desde MySQL Workbench/phpMyAdmin:
@@ -153,7 +155,7 @@ DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=tu_contraseña_mysql
-DB_NAME=gestion_inventario
+DB_NAME=nova_salud_inventario
 
 # Configuración CORS
 CORS_ORIGIN=http://localhost:5173
@@ -187,7 +189,7 @@ VITE_API_URL=http://localhost:5000/api
 VITE_SOCKET_URL=http://localhost:5000
 ```
 
-## 🎮 Uso
+## Uso
 
 ### Iniciar el Backend
 
@@ -202,14 +204,12 @@ Deberías ver:
 
 ```
 ╔═══════════════════════════════════════════════════════════╗
-║                                                           ║
-║   🚀 SERVIDOR INICIADO CORRECTAMENTE                     ║
-║                                                           ║
+║   SERVIDOR INICIADO CORRECTAMENTE                        ║
 ╠═══════════════════════════════════════════════════════════╣
-║   📡 API REST:        http://localhost:5000              ║
-║   🔌 Socket.io:       ws://localhost:5000               ║
-║   🌍 Entorno:         development                        ║
-║   🗄️  Base de Datos:  MySQL (gestion_inventario)       ║
+║   API REST:        http://localhost:5000                 ║
+║   Socket.io:       ws://localhost:5000                   ║
+║   Entorno:         development                           ║
+║   Base de Datos:   MySQL (nova_salud_inventario)         ║
 ╚═══════════════════════════════════════════════════════════╝
 ```
 
@@ -227,19 +227,19 @@ La aplicación estará disponible en: `http://localhost:5173`
 
 1. Abre tu navegador en `http://localhost:5173`
 2. Explora las diferentes secciones:
-   - **Dashboard**: Estadísticas y métricas generales
-   - **Productos**: Gestión de inventario
-   - **Ventas**: Registro de ventas
-   - **Clientes**: Base de datos de clientes
-   - **Ubicaciones**: Gestión de ubicaciones con GPS
-   - **Alertas**: Sistema de alertas de stock
+   - **Dashboard**: Estadísticas y métricas farmacéuticas
+   - **Medicamentos**: Gestión de inventario farmacéutico
+   - **Ventas**: Registro de Ventas con validación de recetas
+   - **Clientes**: Base de datos de pacientes y clientes
+   - **Recetas**: Gestión de prescripciones médicas
+   - **Sucursales**: Gestión de ubicaciones y puntos de venta
+   - **Alertas**: Sistema de alertas de vencimiento y stock
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 gestion-inventario/
-│
-├── 📁 server/                      # Backend
+├── server/                         # Backend
 │   ├── config/database.js          # Configuración MySQL
 │   ├── controllers/                # Lógica de negocio
 │   ├── models/                     # Modelos de datos
@@ -250,12 +250,12 @@ gestion-inventario/
 │   ├── package.json                # Dependencias backend
 │   └── server.js                   # Servidor principal
 │
-├── 📁 database/                    # Scripts SQL
+├── database/                       # Scripts SQL
 │   ├── schema.sql                  # Estructura de tablas
 │   ├── seeds.sql                   # Datos de prueba
 │   └── procedures.sql              # Procedimientos almacenados
 │
-├── 📁 src/                         # Frontend
+├── src/                            # Frontend
 │   ├── components/                 # Componentes React
 │   │   ├── layout/                 # Layout components
 │   │   ├── dashboard/              # Dashboard components
@@ -273,7 +273,7 @@ gestion-inventario/
 └── README.md                       # Documentación
 ```
 
-## 🌐 API Endpoints
+## API Endpoints
 
 ### Productos
 - `GET /api/products` - Listar todos los productos
@@ -300,6 +300,15 @@ gestion-inventario/
 - `PUT /api/customers/:id` - Actualizar cliente
 - `DELETE /api/customers/:id` - Eliminar cliente
 
+### Recetas Médicas
+- `GET /api/prescriptions` - Listar recetas
+- `GET /api/prescriptions/:id` - Obtener receta por ID
+- `GET /api/prescriptions/pending` - Recetas pendientes
+- `GET /api/prescriptions/expiring` - Recetas por vencer
+- `POST /api/prescriptions` - Crear receta
+- `PATCH /api/prescriptions/:id/dispense` - Dispensar medicamento
+- `PUT /api/prescriptions/:id` - Actualizar receta
+
 ### Alertas
 - `GET /api/alerts` - Listar todas las alertas
 - `GET /api/alerts/active` - Alertas activas
@@ -317,7 +326,7 @@ gestion-inventario/
 ### Dashboard
 - `GET /api/dashboard` - Estadísticas del dashboard
 
-## 🔧 Comandos Útiles
+## Comandos Útiles
 
 ### Backend
 ```bash
@@ -333,12 +342,12 @@ npm run build    # Construir para producción
 npm run preview  # Previsualizar build de producción
 ```
 
-## 🐛 Solución de Problemas
+## Solución de Problemas
 
 ### Error de conexión a MySQL
 
 ```
-❌ Error al conectar con MySQL
+Error al conectar con MySQL
 ```
 
 **Solución**: Verifica las credenciales en `server/.env`:
@@ -374,16 +383,17 @@ rm -rf node_modules package-lock.json
 npm install
 ```
 
-## 📝 Datos de Prueba
+## Datos de Prueba
 
-El sistema incluye datos de prueba automáticos:
-- ✅ 15 productos de diferentes categorías
-- ✅ 8 clientes de ejemplo
-- ✅ 6 ubicaciones con coordenadas
-- ✅ 5 ventas registradas
-- ✅ Proveedores y configuraciones
+El sistema incluye datos de prueba específicos para farmacia:
+- 13 medicamentos con información farmacéutica completa
+- 8 clientes/pacientes de ejemplo
+- 6 sucursales farmacéuticas con coordenadas GPS
+- 5 proveedores farmacéuticos especializados
+- 3 recetas médicas de ejemplo
+- Configuración específica para Nova Salud
 
-## 🤝 Contribuir
+## Contribuir
 
 1. Fork el proyecto
 2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
@@ -391,23 +401,26 @@ El sistema incluye datos de prueba automáticos:
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 📄 Licencia
+## Licencia
 
 Este proyecto está bajo la Licencia MIT.
 
-## 👨‍💻 Autor
+## Autor
 
-**Sistema de Gestión de Inventario**
-- Desarrollado como proyecto Full Stack
+**Sistema de Gestión de Inventario - Botica Nova Salud**
+- Desarrollado como proyecto Full Stack especializado en farmacia
 - Tecnologías: React + Node.js + MySQL
+- Cumple con regulaciones farmacéuticas peruanas
 
-## 📞 Soporte
+## Soporte
 
 Si tienes alguna pregunta o problema:
 1. Revisa la sección de [Solución de Problemas](#solución-de-problemas)
 2. Verifica la documentación en `ESTRUCTURA_PROYECTO.md`
 3. Consulta los scripts SQL en la carpeta `database/`
+4. Contacta al soporte técnico de Nova Salud
 
 ---
 
-⭐ **¡Gracias por usar el Sistema de Gestión de Inventario!** ⭐
+**Sistema de Gestión de Inventario - Botica Nova Salud**  
+Comprometidos con la salud y el bienestar de nuestros clientes

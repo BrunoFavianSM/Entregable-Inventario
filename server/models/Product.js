@@ -64,8 +64,8 @@ class Product {
     const params = [
       productData.name,
       productData.sku,
-      productData.description,
-      productData.category_id,
+      productData.description || '',
+      productData.category_id || null,
       productData.price,
       productData.cost,
       productData.stock_quantity || 0,
@@ -73,7 +73,7 @@ class Product {
       productData.max_stock_level || 100,
       productData.unit || 'unidad',
       productData.status || 'active',
-      productData.image_url
+      productData.image_url || null
     ];
     const result = await query(sql, params);
     return result.insertId;

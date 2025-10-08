@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Sales from './pages/Sales';
 import Customers from './pages/Customers';
+import Prescriptions from './pages/Prescriptions';
 import Locations from './pages/Locations';
 import Alerts from './pages/Alerts';
 import { connectSocket, disconnectSocket } from './services/socket';
@@ -59,6 +60,7 @@ function App() {
             <Route path="/products" element={<Products />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/customers" element={<Customers />} />
+            <Route path="/prescriptions" element={<Prescriptions />} />
             <Route path="/locations" element={<Locations />} />
             <Route path="/alerts" element={<Alerts />} />
           </Routes>

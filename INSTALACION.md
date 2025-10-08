@@ -18,6 +18,7 @@ node --version
 **Resultado esperado**: `v22.19.0` o superior
 
 ```bash
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 npm --version
 ```
 **Resultado esperado**: `10.9.3` o superior

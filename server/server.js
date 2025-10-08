@@ -14,6 +14,7 @@ import { testConnection } from './config/database.js';
 import productRoutes from './routes/productRoutes.js';
 import saleRoutes from './routes/saleRoutes.js';
 import customerRoutes from './routes/customerRoutes.js';
+import prescriptionRoutes from './routes/prescriptionRoutes.js';
 import alertRoutes from './routes/alertRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
 
@@ -80,6 +81,7 @@ app.get('/', (req, res) => {
       products: '/api/products',
       sales: '/api/sales',
       customers: '/api/customers',
+      prescriptions: '/api/prescriptions',
       alerts: '/api/alerts',
       locations: '/api/locations',
       dashboard: '/api/dashboard'
@@ -159,6 +161,7 @@ app.get('/api/dashboard', async (req, res) => {
 app.use('/api/products', productRoutes);
 app.use('/api/sales', saleRoutes);
 app.use('/api/customers', customerRoutes);
+app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/locations', locationRoutes);
 
@@ -195,6 +198,7 @@ const startServer = async () => {
       console.log('║      - GET  /api/products                                 ║');
       console.log('║      - GET  /api/sales                                    ║');
       console.log('║      - GET  /api/customers                                ║');
+      console.log('║      - GET  /api/prescriptions                            ║');
       console.log('║      - GET  /api/alerts                                   ║');
       console.log('║      - GET  /api/locations                                ║');
       console.log('║      - GET  /api/dashboard                                ║');

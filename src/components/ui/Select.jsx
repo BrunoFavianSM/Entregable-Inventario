@@ -1,13 +1,13 @@
 import clsx from 'clsx';
 import Tooltip from './Tooltip';
 
-const Input = ({ 
+const Select = ({ 
   label, 
   error, 
   className, 
-  type = 'text',
   icon: Icon,
   tooltip,
+  children,
   ...props 
 }) => {
   return (
@@ -26,8 +26,7 @@ const Input = ({
             <Icon size={18} className="text-gray-400" />
           </div>
         )}
-        <input
-          type={type}
+        <select
           className={clsx(
             'input',
             Icon && 'pl-10',
@@ -35,7 +34,9 @@ const Input = ({
             className
           )}
           {...props}
-        />
+        >
+          {children}
+        </select>
       </div>
       {error && (
         <p className="mt-1 text-sm text-danger-600">{error}</p>
@@ -44,4 +45,4 @@ const Input = ({
   );
 };
 
-export default Input;
+export default Select;
