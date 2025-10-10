@@ -203,12 +203,12 @@ Deberías ver:
 
 ```
 ╔═══════════════════════════════════════════════════════════╗
-║   SERVIDOR INICIADO CORRECTAMENTE                        ║
+║   SERVIDOR INICIADO CORRECTAMENTE                         ║
 ╠═══════════════════════════════════════════════════════════╣
-║   API REST:        http://localhost:5000                 ║
-║   Socket.io:       ws://localhost:5000                   ║
-║   Entorno:         development                           ║
-║   Base de Datos:   MySQL (nova_salud_inventario)         ║
+║   API REST:        http://localhost:5000                  ║
+║   Socket.io:       ws://localhost:5000                    ║
+║   Entorno:         development                            ║
+║   Base de Datos:   MySQL (nova_salud_inventario)          ║
 ╚═══════════════════════════════════════════════════════════╝
 ```
 
