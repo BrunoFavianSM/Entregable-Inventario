@@ -6,7 +6,7 @@ Sistema web especializado para la gestión integral de inventario farmacéutico,
 ![Node](https://img.shields.io/badge/node-22.19.0-green.svg)
 ![React](https://img.shields.io/badge/react-18.2.0-blue.svg)
 ![MySQL](https://img.shields.io/badge/mysql-8.0-orange.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+<!-- ![License](https://img.shields.io/badge/license-MIT-green.svg) -->
 
 ## Tabla de Contenidos
 
@@ -14,11 +14,10 @@ Sistema web especializado para la gestión integral de inventario farmacéutico,
 - [Tecnologías](#tecnologías)
 - [Requisitos Previos](#requisitos-previos)
 - [Instalación](#instalación)
-- [Configuración](#configuración)
 - [Uso](#uso)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [API Endpoints](#api-endpoints)
-- [Capturas de Pantalla](#capturas-de-pantalla)
+- [Vista Previa](#vista-previa)
 
 ## Características
 
@@ -91,8 +90,8 @@ mysql --version
 
 ```bash
 # Si usas Git
-git clone <url-del-repositorio>
-cd gestion-inventario
+git clone https://github.com/BrunoFavianSM Entregable-Inventario.git
+cd Entregable-Inventario
 
 # O simplemente descarga y extrae el ZIP
 ```
@@ -104,7 +103,7 @@ cd gestion-inventario
 Abre MySQL Workbench, phpMyAdmin o tu cliente MySQL preferido y ejecuta:
 
 ```sql
-CREATE DATABASE nova_salud_inventario CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS nova_salud_inventario CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 #### Paso 2: Ejecutar scripts SQL
@@ -122,12 +121,12 @@ mysql -u root -p nova_salud_inventario < database/seeds.sql
 mysql -u root -p nova_salud_inventario < database/procedures.sql
 ```
 
-O desde MySQL Workbench/phpMyAdmin:
-1. Abre `database/schema.sql` y ejecútalo
-2. Abre `database/seeds.sql` y ejecútalo
-3. Abre `database/procedures.sql` y ejecútalo
-
 ### 3. Instalar dependencias del Backend
+Ejecute el siguiente comando para permitir la ejecución de scripts de PowerShell:
+
+```bash
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
 
 ```bash
 cd server
@@ -326,7 +325,31 @@ gestion-inventario/
 ### Dashboard
 - `GET /api/dashboard` - Estadísticas del dashboard
 
+## Vista previa
+
+### Dashboard
+![Captura 1](./capturas/captura-1.png)
+### Medicamentos
+![Captura 2](./capturas/captura-2.png)
+### Ventas
+![Captura 3](./capturas/captura-3.png)
+### Clientes
+![Captura 4](./capturas/captura-4.png)
+### Recetas
+![Captura 5](./capturas/captura-5.png)
+### Sucursales
+![Captura 6](./capturas/captura-6.png)
+### Alertas
+![Captura 7](./capturas/captura-7.png)
+
+
 ## Comandos Útiles
+
+### Permisos para ejecutar scripts de PowerShell
+
+```bash
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
 
 ### Backend
 ```bash
@@ -401,26 +424,8 @@ El sistema incluye datos de prueba específicos para farmacia:
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## Licencia
-
-Este proyecto está bajo la Licencia MIT.
-
-## Autor
-
-**Sistema de Gestión de Inventario - Botica Nova Salud**
-- Desarrollado como proyecto Full Stack especializado en farmacia
-- Tecnologías: React + Node.js + MySQL
-- Cumple con regulaciones farmacéuticas peruanas
-
-## Soporte
-
-Si tienes alguna pregunta o problema:
-1. Revisa la sección de [Solución de Problemas](#solución-de-problemas)
-2. Verifica la documentación en `ESTRUCTURA_PROYECTO.md`
-3. Consulta los scripts SQL en la carpeta `database/`
-4. Contacta al soporte técnico de Nova Salud
 
 ---
 
-**Sistema de Gestión de Inventario - Botica Nova Salud**  
-Comprometidos con la salud y el bienestar de nuestros clientes
+**Sistema de Gestión de Inventario - Botica Nova Salud**
+**Desarrollado por: Bruno Saldarriaga ヾ(⌐■_■)ノ♪**  
